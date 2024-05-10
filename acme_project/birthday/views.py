@@ -1,4 +1,4 @@
-# birthday/views.py 
+# birthday/views.py
 from django.shortcuts import render
 
 from .forms import BirthdayForm
