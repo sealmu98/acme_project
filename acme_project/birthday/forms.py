@@ -1,10 +1,9 @@
 from django import forms
+# Импортируем класс ошибки валидации.
+from django.core.exceptions import ValidationError
 
 # Импортируем класс модели Birthday.
 from .models import Birthday
-
-# Импортируем класс ошибки валидации.
-from django.core.exceptions import ValidationError
 
 # Множество с именами участников Ливерпульской четвёрки.
 BEATLES = {'Джон Леннон', 'Пол Маккартни', 'Джордж Харрисон', 'Ринго Старр'}
