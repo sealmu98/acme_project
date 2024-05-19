@@ -1,12 +1,11 @@
 from django import forms
 # Импортируем класс ошибки валидации.
 from django.core.exceptions import ValidationError
+# Импорт функции для отправки почты.
+from django.core.mail import send_mail
 
 # Импортируем класс модели Birthday.
 from .models import Birthday
-
-# Импорт функции для отправки почты.
-from django.core.mail import send_mail
 
 # Множество с именами участников Ливерпульской четвёрки.
 BEATLES = {'Джон Леннон', 'Пол Маккартни', 'Джордж Харрисон', 'Ринго Старр'}
@@ -20,8 +19,8 @@ class BirthdayForm(forms.ModelForm):
     class Meta:
         # Указываем модель, на основе которой должна строиться форма.
         model = Birthday
-        # Указываем, что надо отобразить все поля.
-        fields = '__all__'
+        # Указываем, что надо отобразить
+        exclude = ('author',)
         widgets = {
             'birthday': forms.DateInput(attrs={'type': 'date'})
         }

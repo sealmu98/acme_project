@@ -1,11 +1,25 @@
-from django.views.generic import (
-    CreateView, DeleteView, DetailView, ListView, UpdateView
-)
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 
 from .forms import BirthdayForm
 from .models import Birthday
 from .utils import calculate_birthday_countdown
+
+
+@login_required
+def simple_view(request):
+    return HttpResponse('Страница для залогиненных пользователей!')
+
+
+class OnlyAuthorMixin(UserPassesTestMixin):
+
+    def test_func(self):
+        object = self.get_object()
+        return object.author == self.request.user
 
 
 # Наследуем класс от встроенного ListView:
@@ -18,7 +32,7 @@ class BirthdayListView(ListView):
     paginate_by = 10
 
 
-class BirthdayCreateView(CreateView):
+class BirthdayCreateView(LoginRequiredMixin, CreateView):
     # Указываем модель, с которой работает CBV...
     model = Birthday
     # Этот класс сам может создать форму на основе модели!
@@ -26,15 +40,21 @@ class BirthdayCreateView(CreateView):
     # Указываем имя формы:
     form_class = BirthdayForm
 
+    def form_valid(self, form):
+        # Присвоить полю author объект пользователя из запроса.
+        form.instance.author = self.request.user
+        # Продолжить валидацию, описанную в форме.
+        return super().form_valid(form) 
 
-class BirthdayUpdateView(UpdateView):
+
+class BirthdayUpdateView(LoginRequiredMixin, OnlyAuthorMixin, UpdateView):
     # Указываем модель, с которой работает CBV...
     model = Birthday
     # Указываем имя формы:
     form_class = BirthdayForm
 
 
-class BirthdayDeleteView(DeleteView):
+class BirthdayDeleteView(LoginRequiredMixin, OnlyAuthorMixin, DeleteView):
     # Указываем модель, с которой работает CBV...
     model = Birthday
     # Указываем namespace:name страницы, куда будет перенаправлен пользователь
