@@ -5,10 +5,17 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 
 # Импортируем класс модели Birthday.
-from .models import Birthday
+from .models import Birthday, Congratulation
 
 # Множество с именами участников Ливерпульской четвёрки.
 BEATLES = {'Джон Леннон', 'Пол Маккартни', 'Джордж Харрисон', 'Ринго Старр'}
+
+
+class CongratulationForm(forms.ModelForm):
+
+    class Meta:
+        model = Congratulation
+        fields = ('text',)
 
 
 # Для использования формы с моделями меняем класс на forms.ModelForm.
@@ -49,7 +56,7 @@ class BirthdayForm(forms.ModelForm):
         first_name = self.cleaned_data['first_name']
         last_name = self.cleaned_data['last_name']
         if f'{first_name} {last_name}' in BEATLES:
-            # Отправляем письмо, если кто-то представляется 
+            # Отправляем письмо, если кто-то представляется
             # именем одного из участников Beatles.
             send_mail(
                 subject='Another Beatles member',
